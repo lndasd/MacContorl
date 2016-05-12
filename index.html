@@ -1,19 +1,96 @@
 <!doctype html>
-<html>
+<html lang="zh-Hans">
   <head>
     <title>This is test site</title>
     <script>
+      var xmlhttp = new XMLHttpRequest();
+      var prex = 0;
+      var prey = 0;
+      var url = "index.html";
+      document.getElementById("container").requestFullScreen();
       function sendMove(p1){
 
       }
+      function sendText(){
+        t = document.getElementsByName("textBox1")[0].value;
+        document.getElementsByName("textBox1")[0].value = "";
+        document.getElementById("op").innerHTML = t;
+        var urlstr = encodeURIComponent(t);
+        xmlhttp.open("GET",url + "?t=" + urlstr,true);
+        xmlhttp.send();
+      }
+      function mousePress(e){
+        prex = e.touches[0].clientX;
+        prey = e.touches[0].clientY;
+      }
+      function mouseMove(e){
+        e.preventDefault();
+        var x = e.touches[0].clientX;
+        var y = e.touches[0].clientY;
+        var coor = "Mouse move position " + x + "," + y;
+        if (Math.abs(prex - x) > 5 || Math.abs(prey - y) > 5) {
+          xmlhttp.open("GET",url + "?x=" + (x - prex) + "&y=" + (y - prey),true);
+          xmlhttp.send();
+          prex = x;
+          prey = y;
+        }
+        document.getElementById("op").innerHTML = coor;
+      }
     </script>
     <style>
-      #container{width: 100%; background-color: #fefefe;}
+      body{font-size: 40px;
+        -webkit-touch-callout: none;
+        -webkit-user-select: none;
+        -khtml-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+      }
+      #container{width: 100%;padding: 0px;margin: 0px;}
+      #t1{width: 60%;font-size: 70px;}
+      #b1{width: 30%;font-size: 70px;}
+      #pArea{
+        width: 100%;
+        height: 100px;
+        background-color: #f1fff1;
+        height: 700px;
+        border-style: solid;
+        border-width: 1px;}
+      .cl{
+        width: 32%;
+        font-size: 50px;
+        background-color: #fefef1;
+        height: 180px;
+        margin: 1px;
+      }
+      .sp{height: 20px;}
     </style>
   </head>
   <body>
     <div id="container">
-      aaa &nbsp baaa
+      <div class="sp"></div>
+      <div id="tArea">
+        <input id="t1" type="text" name="textBox1">
+        <button id="b1" onclick="sendText()">Send</button>
+      </div>
+      <div class="sp"></div>
+      <div id="bArea">
+        <button class="cl">LC</button>
+        <button class="cl">Up</button>
+        <button class="cl">RC</button>
+        <div style="height: 10px;"></div>
+        <button class="cl">Left</button>
+        <button class="cl">Down</button>
+        <button class="cl">Right</button>
+        <div style="height: 10px;"></div>
+        <button class="cl">Press</button>
+        <button class="cl">Delete</button>
+        <button class="cl">Enter</button>
+      </div>
+      <div class="sp"></div>
+      <div id="pArea" ontouchmove="mouseMove(event)" ontouchstart="mousePress(event)">
+      </div>
+      <div id="op"></div>
     </div>
   </body>
 </html>
